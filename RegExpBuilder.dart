@@ -11,6 +11,7 @@ class RegExpBuilder {
   String _behind;
   String _either;
   bool _reluctant;
+  bool _capture;
   
   RegExpBuilder() {
     literal = new StringBuffer();
@@ -28,15 +29,17 @@ class RegExpBuilder {
     this._behind = "";
     this._either = "";
     this._reluctant = false;
+    this._capture = false;
   }
   
   void flushState() {
     if (_of != "" || _ofAny || _from != "" || _notFrom != "" || _like != "") {
+      var captureLiteral = _capture ? "" : "?:";
       var quantityLiteral = getQuantityLiteral();
       var characterLiteral = getCharacterLiteral();
       var reluctantLiteral = _reluctant ? "?" : "";
       var behindLiteral = _behind != "" ? "(?=$_behind)" : "";
-      literal.add("(?:(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral");
+      literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral");
       clear();
     }
   }
@@ -46,13 +49,9 @@ class RegExpBuilder {
       if (_max != -1) {
         return "{$_min,$_max}";
       }
-      else {
-        return "{$_min,}";
-      }
+      return "{$_min,}";
     }
-    else {
-      return "{0,$_max}";
-    }
+    return "{0,$_max}";
   }
   
   String getCharacterLiteral() {
@@ -80,7 +79,7 @@ class RegExpBuilder {
   
   RegExp getRegExp() {
     flushState();
-    return const RegExp(literal.toString());
+    return new RegExp(literal.toString());
   }
   
   Iterable range(int start, int end, [Dynamic f(int)]) {
@@ -169,26 +168,30 @@ class RegExpBuilder {
     return this;
   }
   
+  RegExpBuilder asCapturingGroup() {
+    _capture = true;
+    return this;
+  }
+  
   String _escapeInsideCharacterClass(String s) {
-    s = s.replaceAll(@"\", @"\\");
-    s = s.replaceAll(@"^", @"\^");
-    s = s.replaceAll(@"-", @"\-");
-    s = s.replaceAll(@"]", @"\]");
-    return s;
+    return _escapeSpecialCharacters(s, new HashSet.from([@"\", @"^", @"-", @"]"]));
   }
 
   String _escapeOutsideCharacterClass(String s) {
-    s = s.replaceAll(@"\", @"\\");
-    s = s.replaceAll(@".", @"\.");
-    s = s.replaceAll(@"^", @"\^");
-    s = s.replaceAll(@"$", @"\$");
-    s = s.replaceAll(@"*", @"\*");
-    s = s.replaceAll(@"+", @"\+");
-    s = s.replaceAll(@"?", @"\?");
-    s = s.replaceAll(@"(", @"\(");
-    s = s.replaceAll(@")", @"\)");
-    s = s.replaceAll(@"[", @"\[");
-    s = s.replaceAll(@"{", @"\{");
-    return s;
+    return _escapeSpecialCharacters(s, new HashSet.from([@"\", @".", @"^", @"$", @"*", @"+", @"?", @"(", @")", @"[", @"{"]));
+  }
+  
+  String _escapeSpecialCharacters(String s, Set<String> specialCharacters) {
+    var escapedString = new StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      var character = s[i];
+      if (specialCharacters.contains(character)) {
+        escapedString.add("\\$character");
+      }
+      else {
+        escapedString.add(character);
+      }
+    }
+    return escapedString.toString();
   }
 }
