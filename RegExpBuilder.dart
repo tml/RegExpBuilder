@@ -1,6 +1,8 @@
 class RegExpBuilder {
   
   StringBuffer literal;
+  bool ignoreCase;
+  bool multiLine;
   int _min;
   int _max;
   String _of;
@@ -15,6 +17,8 @@ class RegExpBuilder {
   
   RegExpBuilder() {
     literal = new StringBuffer();
+    ignoreCase = false;
+    multiLine = false;
     clear();
   }
   
@@ -79,7 +83,7 @@ class RegExpBuilder {
   
   RegExp getRegExp() {
     flushState();
-    return new RegExp(literal.toString());
+    return new RegExp(literal.toString(), ignoreCase, multiLine);
   }
   
   Iterable range(int start, int end, [Dynamic f(int)]) {
@@ -144,12 +148,12 @@ class RegExpBuilder {
   }
   
   RegExpBuilder from(Set<String> s) {
-    _from = _escapeInsideCharacterClass(Strings.join(new List.from(s), ""));
+    _from = _escapeInsideCharacterClass(Strings.concatAll(new List.from(s)));
     return this;
   }
   
   RegExpBuilder notFrom(Set<String> s) {
-    _notFrom = _escapeInsideCharacterClass(Strings.join(new List.from(s), ""));
+    _notFrom = _escapeInsideCharacterClass(Strings.concatAll(new List.from(s)));
     return this;
   }
   
