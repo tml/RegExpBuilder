@@ -14,6 +14,7 @@ class RegExpBuilder {
   String _notFrom;
   String _like;
   String _behind;
+  String _notBehind;
   String _either;
   bool _reluctant;
   bool _capture;
@@ -29,17 +30,18 @@ class RegExpBuilder {
   }
   
   void clear() {
-    this._min = -1;
-    this._max = -1;
-    this._of = "";
-    this._ofAny = false;
-    this._from = "";
-    this._notFrom = "";
-    this._like = "";
-    this._behind = "";
-    this._either = "";
-    this._reluctant = false;
-    this._capture = false;
+    _min = -1;
+    _max = -1;
+    _of = "";
+    _ofAny = false;
+    _from = "";
+    _notFrom = "";
+    _like = "";
+    _behind = "";
+    _notBehind = "";
+    _either = "";
+    _reluctant = false;
+    _capture = false;
   }
   
   void flushState() {
@@ -49,7 +51,8 @@ class RegExpBuilder {
       var characterLiteral = getCharacterLiteral();
       var reluctantLiteral = _reluctant ? "?" : "";
       var behindLiteral = _behind != "" ? "(?=$_behind)" : "";
-      literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral");
+      var notBehindLiteral = _notBehind != "" ? "(?!$_behind)" : "";
+      literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral$notBehindLiteral");
       clear();
     }
   }
@@ -175,6 +178,11 @@ class RegExpBuilder {
   
   RegExpBuilder behind(Function r) {
     _behind = r(new RegExpBuilder()).getLiteral();
+    return this;
+  }
+  
+  RegExpBuilder notBehind(Function r) {
+    _notBehind = r(new RegExpBuilder()).getLiteral();
     return this;
   }
   
