@@ -3,6 +3,9 @@ class RegExpBuilder {
   StringBuffer literal;
   bool ignoreCase;
   bool multiLine;
+  HashSet<String> _specialCharactersInsideCharacterClass;
+  HashSet<String> _specialCharactersOutsideCharacterClass;
+  StringBuffer _escapedString;
   int _min;
   int _max;
   String _of;
@@ -19,6 +22,9 @@ class RegExpBuilder {
     literal = new StringBuffer();
     ignoreCase = false;
     multiLine = false;
+    _specialCharactersInsideCharacterClass = new HashSet.from([@"\", @"^", @"-", @"]"]);
+    _specialCharactersOutsideCharacterClass = new HashSet.from([@"\", @".", @"^", @"$", @"*", @"+", @"?", @"(", @")", @"[", @"{"]);
+    _escapedString = new StringBuffer();
     clear();
   }
   
@@ -147,13 +153,13 @@ class RegExpBuilder {
     return this;
   }
   
-  RegExpBuilder from(Set<String> s) {
-    _from = _escapeInsideCharacterClass(Strings.concatAll(new List.from(s)));
+  RegExpBuilder from(List<String> s) {
+    _from = _escapeInsideCharacterClass(Strings.concatAll(s));
     return this;
   }
   
-  RegExpBuilder notFrom(Set<String> s) {
-    _notFrom = _escapeInsideCharacterClass(Strings.concatAll(new List.from(s)));
+  RegExpBuilder notFrom(List<String> s) {
+    _notFrom = _escapeInsideCharacterClass(Strings.concatAll(s));
     return this;
   }
   
@@ -162,7 +168,7 @@ class RegExpBuilder {
     return this;
   }
   
-  RegExpBuilder reluctant() {
+  RegExpBuilder reluctantly() {
     _reluctant = true;
     return this;
   }
@@ -178,24 +184,24 @@ class RegExpBuilder {
   }
   
   String _escapeInsideCharacterClass(String s) {
-    return _escapeSpecialCharacters(s, new HashSet.from([@"\", @"^", @"-", @"]"]));
+    return _escapeSpecialCharacters(s, _specialCharactersInsideCharacterClass);
   }
 
   String _escapeOutsideCharacterClass(String s) {
-    return _escapeSpecialCharacters(s, new HashSet.from([@"\", @".", @"^", @"$", @"*", @"+", @"?", @"(", @")", @"[", @"{"]));
+    return _escapeSpecialCharacters(s, _specialCharactersOutsideCharacterClass);
   }
   
   String _escapeSpecialCharacters(String s, Set<String> specialCharacters) {
-    var escapedString = new StringBuffer();
+    _escapedString.clear();
     for (var i = 0; i < s.length; i++) {
       var character = s[i];
       if (specialCharacters.contains(character)) {
-        escapedString.add("\\$character");
+        _escapedString.add("\\$character");
       }
       else {
-        escapedString.add(character);
+        _escapedString.add(character);
       }
     }
-    return escapedString.toString();
+    return _escapedString.toString();
   }
 }
