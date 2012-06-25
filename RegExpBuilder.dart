@@ -1,8 +1,8 @@
 class RegExpBuilder {
   
   StringBuffer literal;
-  bool ignoreCase;
-  bool multiLine;
+  bool _ignoreCase;
+  bool _multiLine;
   HashSet<String> _specialCharactersInsideCharacterClass;
   HashSet<String> _specialCharactersOutsideCharacterClass;
   StringBuffer _escapedString;
@@ -21,8 +21,6 @@ class RegExpBuilder {
   
   RegExpBuilder() {
     literal = new StringBuffer();
-    ignoreCase = false;
-    multiLine = false;
     _specialCharactersInsideCharacterClass = new HashSet.from([@"\", @"^", @"-", @"]"]);
     _specialCharactersOutsideCharacterClass = new HashSet.from([@"\", @".", @"^", @"$", @"*", @"+", @"?", @"(", @")", @"[", @"{"]);
     _escapedString = new StringBuffer();
@@ -30,6 +28,8 @@ class RegExpBuilder {
   }
   
   void clear() {
+    _ignoreCase = false;
+    _multiLine = false;
     _min = -1;
     _max = -1;
     _of = "";
@@ -92,15 +92,17 @@ class RegExpBuilder {
   
   RegExp getRegExp() {
     flushState();
-    return new RegExp(literal.toString(), ignoreCase, multiLine);
+    return new RegExp(literal.toString(), _ignoreCase, _multiLine);
   }
   
-  Iterable range(int start, int end, [Dynamic f(int)]) {
-    var r = new List();
-    for (var i = start; i < end + 1; i++) {
-      f != null ? r.add(f(i)) : r.add(i);
-    }
-    return r;
+  RegExpBuilder ignoreCase() {
+    _ignoreCase = true;
+    return this;
+  }
+  
+  RegExpBuilder multiLine() {
+    _multiLine = true;
+    return this;
   }
   
   RegExpBuilder start() {
