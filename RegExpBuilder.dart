@@ -1,6 +1,6 @@
 class RegExpBuilder {
   
-  StringBuffer literal;
+  StringBuffer _literal;
   bool _ignoreCase;
   bool _multiLine;
   HashSet<String> _specialCharactersInsideCharacterClass;
@@ -20,14 +20,14 @@ class RegExpBuilder {
   bool _capture;
   
   RegExpBuilder() {
-    literal = new StringBuffer();
+    _literal = new StringBuffer();
     _specialCharactersInsideCharacterClass = new HashSet.from([@"\", @"^", @"-", @"]"]);
     _specialCharactersOutsideCharacterClass = new HashSet.from([@"\", @".", @"^", @"$", @"*", @"+", @"?", @"(", @")", @"[", @"{"]);
     _escapedString = new StringBuffer();
-    clear();
+    _clear();
   }
   
-  void clear() {
+  void _clear() {
     _ignoreCase = false;
     _multiLine = false;
     _min = -1;
@@ -44,7 +44,7 @@ class RegExpBuilder {
     _capture = false;
   }
   
-  void flushState() {
+  void _flushState() {
     if (_of != "" || _ofAny || _from != "" || _notFrom != "" || _like != "") {
       var captureLiteral = _capture ? "" : "?:";
       var quantityLiteral = getQuantityLiteral();
@@ -52,8 +52,8 @@ class RegExpBuilder {
       var reluctantLiteral = _reluctant ? "?" : "";
       var behindLiteral = _behind != "" ? "(?=$_behind)" : "";
       var notBehindLiteral = _notBehind != "" ? "(?!$_behind)" : "";
-      literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral$notBehindLiteral");
-      clear();
+      _literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral$notBehindLiteral");
+      _clear();
     }
   }
   
@@ -86,13 +86,13 @@ class RegExpBuilder {
   }
   
   String getLiteral() {
-    flushState();
-    return literal.toString();
+    _flushState();
+    return _literal.toString();
   }
   
   RegExp getRegExp() {
-    flushState();
-    return new RegExp(literal.toString(), _ignoreCase, _multiLine);
+    _flushState();
+    return new RegExp(_literal.toString(), _ignoreCase, _multiLine);
   }
   
   RegExpBuilder ignoreCase() {
@@ -106,17 +106,18 @@ class RegExpBuilder {
   }
   
   RegExpBuilder start() {
-    literal.add("(?:^)");
+    _literal.add("(?:^)");
     return this;
   }
   
   RegExpBuilder end() {
-    literal.add(@"(?:$)");
+    _flushState();
+    _literal.add(@"(?:$)");
     return this;
   }
   
   RegExpBuilder either(Function r) {
-    flushState();
+    _flushState();
     _either = r(new RegExpBuilder()).getLiteral();
     return this;
   }
@@ -124,26 +125,26 @@ class RegExpBuilder {
   RegExpBuilder or(Function r) {
     var either = _either;
     var or = r(new RegExpBuilder()).getLiteral();
-    literal.add("(?:(?:$either)|(?:$or))");
-    clear();
+    _literal.add("(?:(?:$either)|(?:$or))");
+    _clear();
     return this;
   }
   
   RegExpBuilder exactly(int n) {
-    flushState();
+    _flushState();
     _min = n;
     _max = n;
     return this;
   }
   
   RegExpBuilder min(int n) {
-    flushState();
+    _flushState();
     _min = n;
     return this;
   }
   
   RegExpBuilder max(int n) {
-    flushState();
+    _flushState();
     _max = n;
     return this;
   }
