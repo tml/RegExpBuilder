@@ -81,11 +81,11 @@ class RegExpBuilder:
   
     def ignoreCase(self):
         self._ignoreCase = True
-        return this
+        return self
   
     def multiLine(self):
         self._multiLine = True
-        return this
+        return self
   
     def start(self):
         self._literal += '(?:^)'
