@@ -47,8 +47,8 @@ class RegExpBuilder {
   void _flushState() {
     if (_of != "" || _ofAny || _from != "" || _notFrom != "" || _like != "") {
       var captureLiteral = _capture ? "" : "?:";
-      var quantityLiteral = getQuantityLiteral();
-      var characterLiteral = getCharacterLiteral();
+      var quantityLiteral = _getQuantityLiteral();
+      var characterLiteral = _getCharacterLiteral();
       var reluctantLiteral = _reluctant ? "?" : "";
       var behindLiteral = _behind != "" ? "(?=$_behind)" : "";
       var notBehindLiteral = _notBehind != "" ? "(?!$_behind)" : "";
@@ -57,7 +57,7 @@ class RegExpBuilder {
     }
   }
   
-  String getQuantityLiteral() {
+  String _getQuantityLiteral() {
     if (_min != -1) {
       if (_max != -1) {
         return "{$_min,$_max}";
@@ -67,7 +67,7 @@ class RegExpBuilder {
     return "{0,$_max}";
   }
   
-  String getCharacterLiteral() {
+  String _getCharacterLiteral() {
     if (_of != "") {
       return _of;
     }

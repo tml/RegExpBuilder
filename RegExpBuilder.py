@@ -37,7 +37,7 @@ class RegExpBuilder:
         self._capture = False
 
     def _flushState(self):
-        if self._of != '' or self._ofAny == True or self._from != '' or self._notFrom != '' or self._like != '':
+        if self._of != '' or self._ofAny or self._from != '' or self._notFrom != '' or self._like != '':
             captureLiteral = '' if self._capture else '?:'
             quantityLiteral = self._getQuantityLiteral()
             characterLiteral = self._getCharacterLiteral()
