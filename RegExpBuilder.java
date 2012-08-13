@@ -1,4 +1,4 @@
-package project;
+
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,8 +55,8 @@ public class RegExpBuilder {
   			String quantityLiteral = getQuantityLiteral();
   			String characterLiteral = getCharacterLiteral();
   			String reluctantLiteral = _reluctant ? "?" : "";
-  			String behindLiteral = _behind != "" ? "(?=$_behind)" : "";
-  			String notBehindLiteral = _notBehind != "" ? "(?!$_behind)" : "";
+  			String behindLiteral = _behind != "" ? "(?=" + _behind + ")" : "";
+  			String notBehindLiteral = _notBehind != "" ? "(?!" + _notBehind + ")" : "";
   			_literal.append("(" + captureLiteral + "(?:" + characterLiteral + ")" + quantityLiteral + reluctantLiteral + ")" + behindLiteral + notBehindLiteral);
   			_clear();
     	}
