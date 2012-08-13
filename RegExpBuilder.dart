@@ -51,7 +51,7 @@ class RegExpBuilder {
       var characterLiteral = _getCharacterLiteral();
       var reluctantLiteral = _reluctant ? "?" : "";
       var behindLiteral = _behind != "" ? "(?=$_behind)" : "";
-      var notBehindLiteral = _notBehind != "" ? "(?!$_behind)" : "";
+      var notBehindLiteral = _notBehind != "" ? "(?!$_notBehind)" : "";
       _literal.add("($captureLiteral(?:$characterLiteral)$quantityLiteral$reluctantLiteral)$behindLiteral$notBehindLiteral");
       _clear();
     }
