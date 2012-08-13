@@ -18,9 +18,9 @@ public class Tests {
 	  
 	@Test public void end() {
 		Pattern regex = new RegExpBuilder()
-	    	.exactly(1).of("p")
-	    	.end()
-	    	.getRegExp();
+    		.exactly(1).of("p")
+    		.end()
+    		.getRegExp();
 	    
 	    assertTrue(regex.matcher("p").matches());
 	    assertTrue(!regex.matcher("pq").matches());
@@ -30,8 +30,8 @@ public class Tests {
 		RegExpBuilder p1 = new RegExpBuilder().exactly(1).of("p");
 		RegExpBuilder p2 = new RegExpBuilder().exactly(2).of("q");
 		Pattern regex = new RegExpBuilder()
-  	  		.start()
-  	  		.either(p1)
+  			.start()
+  			.either(p1)
   			.or(p2)
   			.end()
   			.getRegExp();
