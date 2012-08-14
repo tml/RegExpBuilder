@@ -43,7 +43,7 @@ class RegExpBuilder:
             characterLiteral = self._getCharacterLiteral()
             reluctantLiteral = '?' if self._reluctant else ''
             behindLiteral = '(?=' + self._behind + ')' if self._behind != '' else ''
-            notBehindLiteral = '(?!' + self._behind + ')' if self._notBehind != '' else ''
+            notBehindLiteral = '(?!' + self._notBehind + ')' if self._notBehind != '' else ''
             self._literal += '(' + captureLiteral + '(?:' + characterLiteral + ')' + quantityLiteral + reluctantLiteral + ')' + behindLiteral + notBehindLiteral
             self._clear()
   
