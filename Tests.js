@@ -1,42 +1,71 @@
-﻿var test = function (testName, test) {
+﻿var TestRunner = function (tests) {
     var self = this;
 
-    var testName = testName;
-    var failed = false;
+    self.tests = tests;
+    self.failed = 0;
 
-    self.expect = function (result) {
-        if (result != true) {
-            console.log("FAIL: " + testName);
-            failed = true;
+    self.run = function (test) {
+        for (var i = 0; i < self.tests.length; i++) {
+            var test = self.tests[i];
+            var result = test.run();
+            if (result == true) {
+                console.log("PASS: " + test.name);
+            }
+            else {
+                self.failed++;
+                console.log("FAIL: " + test.name);
+            }
         }
-    }
-    test();
-    if (!failed) {
-        console.log("PASS: " + testName);
+        if (self.failed == 0) {
+            console.log("All " + self.tests.length + " tests passed.");
+        }
+        else {
+            console.log(self.failed + " of " + self.tests.length + " tests failed.");
+        }
     }
 }
 
-test("start", function () {
+var Test = function (name, test) {
+    var self = this;
+
+    self.name = name;
+    self.test = test;
+    self.failed = false;
+
+    self.expect = function (result) {
+        if (result != true) {
+            self.failed = true;
+        }
+    }
+
+    self.run = function () {
+        self.test(self);
+        return self.failed == false;
+    }
+}
+
+var tests = [];
+tests.push(new Test("start", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .exactly(1).of("p")
         .getRegExp();
 
-    expect(regex.test("p"));
-    expect(!regex.test("qp"));
-});
+    self.expect(regex.test("p"));
+    self.expect(!regex.test("qp"));
+}));
 
-test("end", function () {
+tests.push(new Test("end", function (self) {
     var regex = new RegExpBuilder()
         .exactly(1).of("p")
         .end()
         .getRegExp();
 
-    expect(regex.test("p"));
-    expect(!regex.test("pq"));
-});
+    self.expect(regex.test("p"));
+    self.expect(!regex.test("pq"));
+}));
 
-test("either or", function () {
+tests.push(new Test("either or", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .either(function (r) { return r.exactly(1).of("p"); })
@@ -44,89 +73,89 @@ test("either or", function () {
         .end()
         .getRegExp();
 
-    expect(regex.test("p"));
-    expect(regex.test("qq"));
-    expect(!regex.test("pqq"));
-    expect(!regex.test("qqp"));
-});
+    self.expect(regex.test("p"));
+    self.expect(regex.test("qq"));
+    self.expect(!regex.test("pqq"));
+    self.expect(!regex.test("qqp"));
+}));
 
-test("exactly", function () {
+tests.push(new Test("exactly", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .exactly(3).of("p")
         .end()
         .getRegExp();
 
-    expect(regex.test("ppp"));
-    expect(!regex.test("pp"));
-    expect(!regex.test("pppp"));
-});
+    self.expect(regex.test("ppp"));
+    self.expect(!regex.test("pp"));
+    self.expect(!regex.test("pppp"));
+}));
 
-test("min", function () {
+tests.push(new Test("min", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .min(2).of("p")
         .end()
         .getRegExp();
 
-    expect(regex.test("pp"));
-    expect(regex.test("ppp"));
-    expect(regex.test("ppppppp"));
-    expect(!regex.test("p"));
-});
+    self.expect(regex.test("pp"));
+    self.expect(regex.test("ppp"));
+    self.expect(regex.test("ppppppp"));
+    self.expect(!regex.test("p"));
+}));
 
-test("max", function () {
+tests.push(new Test("max", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .max(3).of("p")
         .end()
         .getRegExp();
 
-    expect(regex.test("p"));
-    expect(regex.test("pp"));
-    expect(regex.test("ppp"));
-    expect(!regex.test("pppp"));
-    expect(!regex.test("pppppppp"));
-});
+    self.expect(regex.test("p"));
+    self.expect(regex.test("pp"));
+    self.expect(regex.test("ppp"));
+    self.expect(!regex.test("pppp"));
+    self.expect(!regex.test("pppppppp"));
+}));
 
-test("min max", function () {
+tests.push(new Test("min max", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .min(3).max(7).of("p")
         .end()
         .getRegExp();
 
-    expect(regex.test("ppp"));
-    expect(regex.test("ppppp"));
-    expect(regex.test("ppppppp"));
-    expect(!regex.test("pp"));
-    expect(!regex.test("p"));
-    expect(!regex.test("pppppppp"));
-    expect(!regex.test("pppppppppppp"));
-});
+    self.expect(regex.test("ppp"));
+    self.expect(regex.test("ppppp"));
+    self.expect(regex.test("ppppppp"));
+    self.expect(!regex.test("pp"));
+    self.expect(!regex.test("p"));
+    self.expect(!regex.test("pppppppp"));
+    self.expect(!regex.test("pppppppppppp"));
+}));
 
-test("of", function () {
+tests.push(new Test("of", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .exactly(2).of("p p p ")
         .end()
         .getRegExp();
 
-    expect(regex.test("p p p p p p "));
-    expect(!regex.test("p p p p pp"));
-});
+    self.expect(regex.test("p p p p p p "));
+    self.expect(!regex.test("p p p p pp"));
+}));
 
-test("ofAny", function () {
+tests.push(new Test("ofAny", function (self) {
     var regex = new RegExpBuilder()
         .start()
         .exactly(3).ofAny()
         .end()
         .getRegExp();
 
-    expect(regex.test("pqr"));
-});
+    self.expect(regex.test("pqr"));
+}));
 
-test("from", function () {
+tests.push(new Test("from", function (self) {
     var someLetters = ["p", "q", "r"];
     var regex = new RegExpBuilder()
         .start()
@@ -134,14 +163,14 @@ test("from", function () {
         .end()
         .getRegExp();
 
-    expect(regex.test("ppp"));
-    expect(regex.test("qqq"));
-    expect(regex.test("ppq"));
-    expect(regex.test("rqp"));
-    expect(!regex.test("pyy"));
-});
+    self.expect(regex.test("ppp"));
+    self.expect(regex.test("qqq"));
+    self.expect(regex.test("ppq"));
+    self.expect(regex.test("rqp"));
+    self.expect(!regex.test("pyy"));
+}));
 
-test("notFrom", function () {
+tests.push(new Test("notFrom", function (self) {
     var someLetters = ["p", "q", "r"];
     var regex = new RegExpBuilder()
         .start()
@@ -149,11 +178,11 @@ test("notFrom", function () {
         .end()
         .getRegExp();
 
-    expect(regex.test("lmn"));
-    expect(!regex.test("mnq"));
-});
+    self.expect(regex.test("lmn"));
+    self.expect(!regex.test("mnq"));
+}));
 
-test("like", function () {
+tests.push(new Test("like", function (self) {
     var pattern = function (r) {
         return r.min(1).of("p").min(2).of("q");
     }
@@ -164,51 +193,51 @@ test("like", function () {
         .end()
         .getRegExp();
 
-    expect(regex.test("pqqpqq"));
-    expect(!regex.test("qppqpp"));
-});
+    self.expect(regex.test("pqqpqq"));
+    self.expect(!regex.test("qppqpp"));
+}));
 
-test("reluctantly", function () {
+tests.push(new Test("reluctantly", function (self) {
     var regex = new RegExpBuilder()
         .exactly(2).of("p")
         .min(2).ofAny().reluctantly()
         .exactly(2).of("p")
         .getRegExp();
 
-    expect(regex.exec("pprrrrpprrpp")[0] == "pprrrrpp");
-});
+    self.expect(regex.exec("pprrrrpprrpp")[0] == "pprrrrpp");
+}));
 
-test("behind", function () {
+tests.push(new Test("behind", function (self) {
     var regex = new RegExpBuilder()
         .exactly(1).of("dart")
         .behind(function (r) { return r.exactly(1).of("lang"); })
         .getRegExp();
 
-    expect(regex.exec("dartlang")[0] == "dart");
-    expect(!regex.test("dartpqr"));
-});
+    self.expect(regex.exec("dartlang")[0] == "dart");
+    self.expect(!regex.test("dartpqr"));
+}));
 
-test("notBehind", function () {
+tests.push(new Test("notBehind", function (self) {
     var regex = new RegExpBuilder()
         .exactly(1).of("dart")
         .notBehind(function (r) { return r.exactly(1).of("pqr"); })
         .getRegExp();
 
-    expect(regex.test("dartlang"));
-    expect(!regex.test("dartpqr"));
-});
+    self.expect(regex.test("dartlang"));
+    self.expect(!regex.test("dartpqr"));
+}));
 
-test("asCapturingGroup", function () {
+tests.push(new Test("asCapturingGroup", function (self) {
     var regex = new RegExpBuilder()
         .min(1).max(3).of("p")
         .exactly(1).of("dart").asCapturingGroup()
         .exactly(1).from(["p", "q", "r"])
         .getRegExp();
 
-    expect(regex.exec("pdartq")[1] == "dart");
-});
+    self.expect(regex.exec("pdartq")[1] == "dart");
+}));
 
-test("special characters are escaped", function () {
+tests.push(new Test("special characters are escaped", function (self) {
     var shouldBeEscaped = ["\\", "\.", "*"];
     var regex = new RegExpBuilder()
         .min(1).from(shouldBeEscaped)
@@ -216,5 +245,8 @@ test("special characters are escaped", function () {
         .min(1).of("+")
         .getRegExp();
 
-    expect(regex.test("\\s+"));
-});
+    self.expect(regex.test("\\s+"));
+}));
+
+var testRunner = new TestRunner(tests);
+testRunner.run();
