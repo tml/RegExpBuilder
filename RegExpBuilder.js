@@ -32,7 +32,7 @@
             var characterLiteral = self._getCharacterLiteral();
             var reluctantLiteral = self._reluctant ? "?" : "";
             var behindLiteral = self._behind != "" ? "(?=" + self._behind + ")" : "";
-            var notBehindLiteral = self._notBehind != "" ? "(?!" + self._behind + ")" : "";
+            var notBehindLiteral = self._notBehind != "" ? "(?!" + self._notBehind + ")" : "";
             self._literal.push("(" + captureLiteral + "(?:" + characterLiteral + ")" + quantityLiteral + reluctantLiteral + ")" + behindLiteral + notBehindLiteral);
             self._clear();
         }
@@ -107,7 +107,7 @@
     self.or = function (r) {
         var either = self._either;
         var or = r(new RegExpBuilder()).getLiteral();
-        self._literal.push("(?:(?:" + self._either + ")|(?:" + self._or + "))");
+        self._literal.push("(?:(?:" + either + ")|(?:" + or + "))");
         self._clear();
         return self;
     }
