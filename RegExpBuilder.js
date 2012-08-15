@@ -2,8 +2,8 @@
     var self = this;
 
     self._literal = [];
-    self._specialCharactersInsideCharacterClass = { "\\": true, "\^": true, "\-": true, "\]": true };
-    self._specialCharactersOutsideCharacterClass = { "\\": true, "\.": true, "\^": true, "\$": true, "\*": true, "\+": true, "\?": true, "\(": true, "\)": true, "\[": true, "\{": true };
+    self._specialCharactersInsideCharacterClass = { "\^": true, "\-": true, "\]": true };
+    self._specialCharactersOutsideCharacterClass = { "\.": true, "\^": true, "\$": true, "\*": true, "\+": true, "\?": true, "\(": true, "\)": true, "\[": true, "\{": true };
     self._escapedString = [];
 
     self._clear = function () {

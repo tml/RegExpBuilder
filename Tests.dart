@@ -193,15 +193,4 @@ main() {
     
     expect(regex.firstMatch("pdartq").group(1) == "dart");
   });
-  
-  test("special characters are escaped", () {
-    var shouldBeEscaped = [@"\", @".", @"*"];
-    var regex = new RegExpBuilder()
-      .min(1).from(shouldBeEscaped)
-      .min(1).of("s")
-      .min(1).of("+")
-      .getRegExp();
-    
-    expect(regex.hasMatch(@"\s+"));
-  });
 }

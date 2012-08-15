@@ -245,16 +245,5 @@ tests.push(new Test("asCapturingGroup", function (self) {
     self.expect(regex.exec("pdartq")[1] == "dart");
 }));
 
-tests.push(new Test("special characters are escaped", function (self) {
-    var shouldBeEscaped = ["\\", "\.", "*"];
-    var regex = new RegExpBuilder()
-        .min(1).from(shouldBeEscaped)
-        .min(1).of("s")
-        .min(1).of("+")
-        .getRegExp();
-
-    self.expect(regex.test("\\s+"));
-}));
-
 var testRunner = new TestRunner(tests);
 testRunner.run();

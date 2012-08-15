@@ -26,8 +26,8 @@ public class RegExpBuilder {
   
 	public RegExpBuilder() {
 		_literal = new StringBuffer();
-		_specialCharactersInsideCharacterClass = new HashSet<Character>(Arrays.asList(new Character[]{ '\\', '^', '-', ']' }));
-		_specialCharactersOutsideCharacterClass = new HashSet<Character>(Arrays.asList(new Character[]{ '\\', '.', '^', '$', '*', '+', '?', '(', ')', '[', '{' }));
+		_specialCharactersInsideCharacterClass = new HashSet<Character>(Arrays.asList(new Character[]{ '^', '-', ']' }));
+		_specialCharactersOutsideCharacterClass = new HashSet<Character>(Arrays.asList(new Character[]{ '.', '^', '$', '*', '+', '?', '(', ')', '[', '{' }));
 		_escapedString = new StringBuffer();
 		_clear();
 	}

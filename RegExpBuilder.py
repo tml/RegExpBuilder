@@ -5,8 +5,8 @@ class RegExpBuilder:
     def __init__(self):
         self._literal = ''
         self._ignoreCase = False
-        self._specialCharactersInsideCharacterClass = set(['\\', '^', '-', ']'])
-        self._specialCharactersOutsideCharacterClass = set(['\\', '.', '^', '$', '*', '+', '?', '(', ')', '[', '{'])
+        self._specialCharactersInsideCharacterClass = set(['^', '-', ']'])
+        self._specialCharactersOutsideCharacterClass = set(['.', '^', '$', '*', '+', '?', '(', ')', '[', '{'])
         self._min = -1
         self._max = -1
         self._of = ''

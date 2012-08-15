@@ -175,16 +175,6 @@ class Test(unittest.TestCase):
         regex = regex.getRegExp()
         
         self.assertTrue(regex.match("pdartq").group(1) == "dart")
-  
-    def test_special_characters_are_escaped(self):
-        shouldBeEscaped = ["\\", ".", "*"]
-        regex = RegExpBuilder()
-        regex.min(1).fromClass(shouldBeEscaped)
-        regex.min(1).of("s")
-        regex.min(1).of("+")
-        regex = regex.getRegExp()
-        
-        self.assertTrue(regex.match(r"\s+") is not None)
 
 if __name__ == '__main__':
     unittest.main()

@@ -209,15 +209,4 @@ public class Tests {
 	    
 	    assertTrue(m.group(1).equals("dart"));
 	}
-	  
-	@Test public void specialCharactersAreEscaped() {
-	    char[] shouldBeEscaped = { '\\', '.', '*' };
-	    Pattern regex = new RegExpBuilder()
-	    	.min(1).from(shouldBeEscaped)
-	    	.min(1).of("s")
-	    	.min(1).of("+")
-	    	.getRegExp();
-	    
-	    assertTrue(regex.matcher("\\s+").matches());
-	}
 }
