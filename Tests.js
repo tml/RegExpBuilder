@@ -1,26 +1,35 @@
 ﻿var TestRunner = function (tests) {
     var self = this;
 
-    self.tests = tests;
-    self.failed = 0;
+    self._tests = tests;
+    self._failed = 0;
 
-    self.run = function (test) {
-        for (var i = 0; i < self.tests.length; i++) {
-            var test = self.tests[i];
-            var result = test.run();
-            if (result == true) {
-                console.log("PASS: " + test.name);
-            }
-            else {
-                self.failed++;
-                console.log("FAIL: " + test.name);
-            }
+    self.run = function () {
+        for (var i = 0; i < self._tests.length; i++) {
+            var test = self._tests[i];
+            test.run();
+            self._printResult(test);
         }
-        if (self.failed == 0) {
-            console.log("All " + self.tests.length + " tests passed.");
+        self._printSummary();
+    }
+
+    self._printResult = function (test) {
+        if (test.passed == true) {
+            console.log("PASS: " + test.name);
         }
         else {
-            console.log(self.failed + " of " + self.tests.length + " tests failed.");
+            self._failed++;
+            console.log("FAIL: " + test.name);
+        }
+    }
+
+    self._printSummary = function () {
+        console.log("");
+        if (self._failed == 0) {
+            console.log("All " + self._tests.length + " tests passed.");
+        }
+        else {
+            console.log(self._failed + " of " + self._tests.length + " tests failed.");
         }
     }
 }
@@ -30,17 +39,16 @@ var Test = function (name, test) {
 
     self.name = name;
     self.test = test;
-    self.failed = false;
+    self.passed = true;
 
     self.expect = function (result) {
         if (result != true) {
-            self.failed = true;
+            self.passed = false;
         }
     }
 
     self.run = function () {
         self.test(self);
-        return self.failed == false;
     }
 }
 
